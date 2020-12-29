@@ -26,10 +26,10 @@ namespace FilmReviews.Web.Controllers
         [HttpGet("{imdbId}")]
         public async Task<IActionResult> Details(string imdbId)
         {
-            var client = _clientFactory.CreateClient();
+            var client = _clientFactory.CreateClient("filmReviewsAPI");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"https://localhost:44318/api/movie/{imdbId}");
+                $"api/movie/{imdbId}");
 
             var response = await client.SendAsync(request);
 

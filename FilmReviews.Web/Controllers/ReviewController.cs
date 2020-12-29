@@ -37,13 +37,17 @@ namespace FilmReviews.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var client = _clientFactory.CreateClient("local");
+                var client = _clientFactory.CreateClient("filmReviewsAPI");
 
                 var response = client.PostAsJsonAsync("api/review/create", review).Result;
 
                 if (response.IsSuccessStatusCode)
                     return RedirectToAction("Index", "Home");
+
+                var result = response.Content.ReadAsStringAsync();
+                ViewBag.Message = result.Result; 
             }
+
             return View(nameof(Index), review);
         }
     }

@@ -25,9 +25,9 @@ namespace FilmReviews.Web
         {
             services.AddControllersWithViews();
             services.AddHttpClient();
-            services.AddHttpClient("local", c =>
+            services.AddHttpClient("filmReviewsAPI", c =>
             {
-                c.BaseAddress = new Uri(Configuration.GetValue<string>("Localhost"));
+                c.BaseAddress = new Uri(Configuration.GetValue<string>("FilmReviewsAPI"));
             });
         }
 
