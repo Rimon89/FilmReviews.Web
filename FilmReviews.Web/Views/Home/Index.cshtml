@@ -2,17 +2,11 @@
     ViewData["Title"] = "Home Page";
 }
 
-<form id="your_form" onsubmit="yourFunction()">
+<form id="searchForm" onsubmit="movieSearch()">
     <input type="text" name="keywords">
     <input type="submit" value="Search">
 </form>
 
 @section Scripts {
-<script>
-    function yourFunction() {
-        var action_src = "https://localhost:44367/movie/" + document.getElementsByName("keywords")[0].value;
-        var your_form = document.getElementById('your_form');
-        your_form.action = action_src;
-    }
-</script>
+<script src="~/js/site.js"></script>
 }

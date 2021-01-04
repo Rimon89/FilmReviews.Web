@@ -1,4 +1,5 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿function movieSearch() {
+    var action_src = "https://localhost:44367/movie/" + document.getElementsByName("keywords")[0].value;
+    var searchForm = document.getElementById('searchForm');
+    searchForm.action = action_src;
+}

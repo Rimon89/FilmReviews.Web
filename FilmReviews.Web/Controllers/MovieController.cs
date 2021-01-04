@@ -35,8 +35,8 @@ namespace FilmReviews.Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var x = await response.Content.ReadAsStringAsync();
-                movie = JsonConvert.DeserializeObject<Movie>(x);
+                var content = await response.Content.ReadAsStringAsync();
+                movie = JsonConvert.DeserializeObject<Movie>(content);
             }
             else
             {

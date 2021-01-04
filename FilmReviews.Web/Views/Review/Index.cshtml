@@ -1,12 +1,5 @@
 ﻿@model FilmReviews.Web.ViewModels.Review
 
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <script type="text/javascript">
-        alert("@ViewBag.Message");
-    </script>
-}
-
 <h1>Review</h1>
 @using (Html.BeginForm("AddReview", "Review"))
 {

@@ -26,29 +26,52 @@ namespace FilmReviews.Web.Controllers
         [HttpGet("{imdbId}/{movieTitle}")]
         public IActionResult Index(string imdbId, string movieTitle)
         {
-            var review = new Review();
-            review.MovieTitle = movieTitle;
-            review.ImdbId = imdbId;
+            var review = new Review
+            {
+                MovieTitle = movieTitle,
+                ImdbId = imdbId
+            };
             return View(review);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllReviews()
+        {
+            var client = _clientFactory.CreateClient("filmReviewsAPI");
+
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                $"api/review/getall");
+
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                return BadRequest();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var reviews = JsonConvert.DeserializeObject<List<Review>>(content);
+
+            return View(reviews);
+        }
+
         [HttpPost]
-        public IActionResult AddReview([FromForm] Review review)
+        public async Task<IActionResult> AddReview([FromForm] Review review)
         {
             if (ModelState.IsValid)
             {
                 var client = _clientFactory.CreateClient("filmReviewsAPI");
 
-                var response = client.PostAsJsonAsync("api/review/create", review).Result;
+                var response = await client.PostAsJsonAsync("api/review/create", review);
 
                 if (response.IsSuccessStatusCode)
                     return RedirectToAction("Index", "Home");
-
-                var result = response.Content.ReadAsStringAsync();
-                ViewBag.Message = result.Result; 
             }
-
             return View(nameof(Index), review);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            return RedirectToAction("GetAllReviews");
         }
     }
 }

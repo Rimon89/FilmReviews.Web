@@ -9,6 +9,7 @@ namespace FilmReviews.Web.ViewModels
 {
     public class Review
     {
+        public Guid Id { get; set; }
         public string MovieTitle { get; set; }
         public string ImdbId { get; set; }
 
