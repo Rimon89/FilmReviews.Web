@@ -31,6 +31,8 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @addTagHelper *, Vereyon.Web.FlashMessage
+            <flash dismissable="true" />
             @RenderBody()
         </main>
     </div>

@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Vereyon.Web;
 
 namespace FilmReviews.Web.Controllers
 {
@@ -17,10 +18,12 @@ namespace FilmReviews.Web.Controllers
     public class ReviewController : Controller
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IFlashMessage FlashMessage;
 
-        public ReviewController(IHttpClientFactory clientFactory)
+        public ReviewController(IHttpClientFactory clientFactory, IFlashMessage flashMessage)
         {
             _clientFactory = clientFactory;
+            FlashMessage = flashMessage;
         }
 
         [HttpGet("{imdbId}/{movieTitle}")]
@@ -71,7 +74,16 @@ namespace FilmReviews.Web.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return RedirectToAction("GetAllReviews");
+            var client = _clientFactory.CreateClient("filmReviewsAPI");
+
+            var response = await client.DeleteAsync($"api/review/delete/{id}");
+
+            if(response.IsSuccessStatusCode)
+                return RedirectToAction(nameof(GetAllReviews));
+
+            var content = await response.Content.ReadAsStringAsync();
+            FlashMessage.Danger(content);
+            return RedirectToAction(nameof(GetAllReviews));
         }
     }
 }
