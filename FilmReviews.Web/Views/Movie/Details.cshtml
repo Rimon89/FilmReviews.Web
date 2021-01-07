@@ -116,13 +116,13 @@
     </div>
     <div>
         @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }) |
-        <a asp-action="Index">Home</a>
+        <a asp-controller="Home" asp-action="Index">Home</a>
     </div>
 }
 else
 {
-    <h1>Movie Not Found!</h1>
+    <h1>Empty! :(</h1>
     <div>
-        <a asp-action="Index">Home</a>
+        <a asp-controller="Home" asp-action="Index">Home</a>
     </div>
 }

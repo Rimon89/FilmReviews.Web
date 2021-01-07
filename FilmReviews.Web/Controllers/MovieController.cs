@@ -1,4 +1,5 @@
-﻿using FilmReviews.Web.ViewModels;
+﻿using FilmReviews.Web.Services;
+using FilmReviews.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -8,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Vereyon.Web;
 
 namespace FilmReviews.Web.Controllers
 {
@@ -15,34 +17,30 @@ namespace FilmReviews.Web.Controllers
     [Route("[controller]")]
     public class MovieController : Controller
     {
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IFlashMessage _flashMessage;
+        private readonly IHttpService _httpService;
         Movie movie;
 
-        public MovieController(IHttpClientFactory clientFactory)
+        public MovieController(IHttpService httpService, IFlashMessage flashMessage)
         {
-            _clientFactory = clientFactory;
+            _httpService = httpService;
+            _flashMessage = flashMessage;
         }
 
         [HttpGet("{imdbId}")]
         public async Task<IActionResult> Details(string imdbId)
         {
-            var client = _clientFactory.CreateClient("filmReviewsAPI");
-
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"api/movie/{imdbId}");
-
-            var response = await client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            using (var response = await _httpService.GetAsync($"api/movie/{imdbId}"))
             {
-                var content = await response.Content.ReadAsStringAsync();
-                movie = JsonConvert.DeserializeObject<Movie>(content);
-            }
-            else
-            {
-                movie = null;
-            }
+                if (!response.IsSuccessStatusCode)
+                {
+                    movie = null;
+                    _flashMessage.Warning("An error occurred on the server.");
 
+                    return View(movie);
+                }
+                movie = await _httpService.DeserializeAsync<Movie>(response);
+            }
             return View(movie);
         }
     }

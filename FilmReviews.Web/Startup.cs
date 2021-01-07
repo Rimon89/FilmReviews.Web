@@ -1,3 +1,4 @@
+using FilmReviews.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,7 +26,10 @@ namespace FilmReviews.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddHttpClient();
+
+            services.AddScoped<IHttpService, HttpService>();
+
+            services.AddHttpClient<HttpService>();
             services.AddHttpClient("filmReviewsAPI", c =>
             {
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("FilmReviewsAPI"));

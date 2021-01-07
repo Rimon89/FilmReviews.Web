@@ -1,4 +1,5 @@
-﻿using FilmReviews.Web.ViewModels;
+﻿using FilmReviews.Web.Services;
+using FilmReviews.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -17,13 +18,13 @@ namespace FilmReviews.Web.Controllers
     [Route("[controller]")]
     public class ReviewController : Controller
     {
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IFlashMessage FlashMessage;
+        private readonly IFlashMessage _flashMessage;
+        private readonly IHttpService _httpService;
 
-        public ReviewController(IHttpClientFactory clientFactory, IFlashMessage flashMessage)
+        public ReviewController(IFlashMessage flashMessage, IHttpService httpService)
         {
-            _clientFactory = clientFactory;
-            FlashMessage = flashMessage;
+            _flashMessage = flashMessage;
+            _httpService = httpService;
         }
 
         [HttpGet("{imdbId}/{movieTitle}")]
@@ -37,23 +38,32 @@ namespace FilmReviews.Web.Controllers
             return View(review);
         }
 
-        [HttpGet]
+        [HttpGet("Details/{id}")]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            using (var response = await _httpService.GetAsync($"api/review/{id}"))
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    _flashMessage.Warning("An error occurred on the server.");
+                    return RedirectToAction(nameof(GetAllReviews));
+                }
+                return View(await _httpService.DeserializeAsync<Review>(response));
+            }
+        }
+
+        [HttpGet("AllReviews")]
         public async Task<IActionResult> GetAllReviews()
         {
-            var client = _clientFactory.CreateClient("filmReviewsAPI");
-
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"api/review/getall");
-
-            var response = await client.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-                return BadRequest();
-
-            var content = await response.Content.ReadAsStringAsync();
-            var reviews = JsonConvert.DeserializeObject<List<Review>>(content);
-
-            return View(reviews);
+            using (var response = await _httpService.GetAsync("api/review/getall"))
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    _flashMessage.Warning("An error occurred on the server.");
+                    return RedirectToAction("Index", "Home");
+                }
+                return View(await _httpService.DeserializeAsync<List<Review>>(response));
+            }
         }
 
         [HttpPost]
@@ -61,12 +71,16 @@ namespace FilmReviews.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var client = _clientFactory.CreateClient("filmReviewsAPI");
-
-                var response = await client.PostAsJsonAsync("api/review/create", review);
-
-                if (response.IsSuccessStatusCode)
-                    return RedirectToAction("Index", "Home");
+                review.ReviewDate = DateTime.Now;
+                using (var response = await _httpService.PostAsync("api/review/create", review))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        _flashMessage.Confirmation($"Thank you {review.Author} for the review of {review.MovieTitle}");
+                        return RedirectToAction("Index", "Home");
+                    }
+                    _flashMessage.Warning("An error occurred on the server.");
+                }
             }
             return View(nameof(Index), review);
         }
@@ -74,16 +88,49 @@ namespace FilmReviews.Web.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var client = _clientFactory.CreateClient("filmReviewsAPI");
-
-            var response = await client.DeleteAsync($"api/review/delete/{id}");
-
-            if(response.IsSuccessStatusCode)
+            using (var response = await _httpService.DeleteAsync($"api/review/delete/{id}"))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    _flashMessage.Confirmation("Deleted successfully");
+                    return RedirectToAction(nameof(GetAllReviews));
+                }
+                _flashMessage.Danger("An error occurred on the server.");
                 return RedirectToAction(nameof(GetAllReviews));
+            }
+        }
 
-            var content = await response.Content.ReadAsStringAsync();
-            FlashMessage.Danger(content);
-            return RedirectToAction(nameof(GetAllReviews));
+        [HttpGet("Edit/{id}")]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            using (var response = await _httpService.GetAsync($"api/review/{id}"))
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    _flashMessage.Warning("An error occurred on the server.");
+                    return RedirectToAction(nameof(GetAllReviews));
+                }
+                return View(await _httpService.DeserializeAsync<Review>(response));
+            }
+        }
+
+        [HttpPost("Edit/{id}")]
+        public async Task<IActionResult> Edit([FromForm] Review review)
+        {
+            if (ModelState.IsValid)
+            {
+                review.ReviewDate = DateTime.Now;
+                using (var response = await _httpService.PutAsync($"api/review/update", review))
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _flashMessage.Warning("An error occurred on the server.");
+                        return RedirectToAction(nameof(Edit));
+                    }
+                    _flashMessage.Confirmation("Updated successfully");
+                }
+            }
+            return RedirectToAction(nameof(Edit));
         }
     }
 }
