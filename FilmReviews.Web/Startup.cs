@@ -1,14 +1,10 @@
 using FilmReviews.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Vereyon.Web;
 
 namespace FilmReviews.Web
@@ -28,12 +24,13 @@ namespace FilmReviews.Web
             services.AddControllersWithViews();
 
             services.AddScoped<IHttpService, HttpService>();
+            services.AddSingleton<CacheService>();
 
-            services.AddHttpClient<HttpService>();
-            services.AddHttpClient("filmReviewsAPI", c =>
+            services.AddHttpClient<HttpService>("filmReviewsAPI", c =>
             {
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("FilmReviewsAPI"));
             });
+
             services.AddFlashMessage();
         }
 

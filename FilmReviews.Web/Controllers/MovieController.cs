@@ -1,13 +1,9 @@
-﻿using FilmReviews.Web.Services;
+﻿using FilmReviews.Web.Common;
+using FilmReviews.Web.Services;
 using FilmReviews.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Vereyon.Web;
 
@@ -19,27 +15,36 @@ namespace FilmReviews.Web.Controllers
     {
         private readonly IFlashMessage _flashMessage;
         private readonly IHttpService _httpService;
-        Movie movie;
+        private readonly CacheService _cacheService;
 
-        public MovieController(IHttpService httpService, IFlashMessage flashMessage)
+        public MovieController(IHttpService httpService, IFlashMessage flashMessage, CacheService cacheService)
         {
             _httpService = httpService;
             _flashMessage = flashMessage;
+            _cacheService = cacheService;
         }
 
-        [HttpGet("{imdbId}")]
+        [HttpGet(Constants.ApiRoutes.Movie.GetId)]
         public async Task<IActionResult> Details(string imdbId)
         {
-            using (var response = await _httpService.GetAsync($"api/movie/{imdbId}"))
+            if (!_cacheService.TryGetValue<Movie>(Constants.CacheKeys.Movie + imdbId, out Movie movie))
             {
-                if (!response.IsSuccessStatusCode)
+                using (var response = await _httpService.GetAsync($"api/movie/{imdbId}"))
                 {
-                    movie = null;
-                    _flashMessage.Warning("An error occurred on the server.");
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        movie = null;
+                        _flashMessage.Warning("An error occurred on the server.");
 
-                    return View(movie);
+                        return View(movie);
+                    }
+                    movie = await _httpService.DeserializeAsync<Movie>(response);
+                    _cacheService.Set(Constants.CacheKeys.Movie + imdbId, movie, new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpiration = DateTime.Now.AddHours(1),
+                        SlidingExpiration = TimeSpan.FromMinutes(5)
+                    });
                 }
-                movie = await _httpService.DeserializeAsync<Movie>(response);
             }
             return View(movie);
         }

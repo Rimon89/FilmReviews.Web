@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -23,11 +20,11 @@ namespace FilmReviews.Web.Services
         {
             return await _client.GetAsync(url);
         }
-        public async Task<HttpResponseMessage> PostAsync(string url, object content)
+        public async Task<HttpResponseMessage> PostAsync<T>(string url, T content)
         {
             return await _client.PostAsJsonAsync(url, content);
         }
-        public async Task<HttpResponseMessage> PutAsync(string url, object content)
+        public async Task<HttpResponseMessage> PutAsync<T>(string url, T content)
         {
             return await _client.PutAsJsonAsync(url, content);
         }
@@ -39,11 +36,9 @@ namespace FilmReviews.Web.Services
 
         public async Task<T> DeserializeAsync<T>(HttpResponseMessage response)
         {
-            T model;
-
             var content = await response.Content.ReadAsStringAsync();
 
-            model = JsonConvert.DeserializeObject<T>(content);
+            T model = JsonConvert.DeserializeObject<T>(content);
 
             return model;
         }
