@@ -29,22 +29,20 @@ namespace FilmReviews.Web.Controllers
         {
             if (!_cacheService.TryGetValue<Movie>(Constants.CacheKeys.Movie + imdbId, out Movie movie))
             {
-                using (var response = await _httpService.GetAsync($"api/movie/{imdbId}"))
+                var response = await _httpService.GetAsync($"api/movie/{imdbId}");
+                if (!response.IsSuccessStatusCode)
                 {
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        movie = null;
-                        _flashMessage.Warning("An error occurred on the server.");
+                    movie = null;
+                    _flashMessage.Warning("An error occurred on the server.");
 
-                        return View(movie);
-                    }
-                    movie = await _httpService.DeserializeAsync<Movie>(response);
-                    _cacheService.Set(Constants.CacheKeys.Movie + imdbId, movie, new MemoryCacheEntryOptions
-                    {
-                        AbsoluteExpiration = DateTime.Now.AddHours(1),
-                        SlidingExpiration = TimeSpan.FromMinutes(5)
-                    });
+                    return View(movie);
                 }
+                movie = await _httpService.DeserializeAsync<Movie>(response);
+                _cacheService.Set(Constants.CacheKeys.Movie + imdbId, movie, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTime.Now.AddHours(1),
+                    SlidingExpiration = TimeSpan.FromMinutes(5)
+                });
             }
             return View(movie);
         }
