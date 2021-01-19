@@ -7,8 +7,7 @@
 @if (Model.Count() > 0)
 {
     <h1>Reviews</h1>
-
-    <table class="table">
+    <table class="table table-hover ">
         <thead>
             <tr>
                 <th>
@@ -38,34 +37,48 @@
         <tbody>
             @foreach (var item in Model)
             {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MovieTitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ImdbId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MovieReview)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Rating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Author)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
+                <tr class="table-default">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MovieTitle)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImdbId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReviewDate)
+                    </td>
+                    <td>
+                        @if (item.MovieReview.Length > 10)
+                        {
+                            @item.MovieReview.Substring(0, 9)
+                            <text> ... </text>
+                        }
+                        else
+                        {
+                            @item.MovieReview
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rating)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">
+                            <i class="fa fa-search"></i> Edit
+                        </a>
+                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">
+                            <i class="fa fa-search"></i> Details
+                        </a>
+                        <a class="btn btn-outline-warning" asp-action="Delete" asp-route-id="@item.Id">
+                            <i class="fa fa-search"></i> Delete
+                        </a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>

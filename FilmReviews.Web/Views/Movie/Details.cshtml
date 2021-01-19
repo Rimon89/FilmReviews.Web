@@ -1,4 +1,4 @@
-﻿@model FilmReviews.Web.ViewModels.Movie 
+﻿@model FilmReviews.Web.ViewModels.Movie
 
 @{
     ViewData["Title"] = "Details";
@@ -6,118 +6,31 @@
 
 @if (Model != null)
 {
-    <h1>@Html.DisplayFor(model => model.Title)</h1>
-    <div>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Year)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Year)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Rated)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Rated)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Released)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Released)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Runtime)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Runtime)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Genre)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Genre)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Director)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Director)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Writer)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Writer)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Actors)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Actors)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Plot)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Plot)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Language)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Language)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Country)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Country)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Awards)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Awards)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Poster)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Poster)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Metascore)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Metascore)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ImdbRating)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ImdbRating)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ImdbVotes)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ImdbVotes)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Production)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Production)
-            </dd>
-        </dl>
-    </div>
-    <div>
-        @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }) |
-        <a asp-controller="Home" asp-action="Index">Home</a>
-    </div>
+<div class="jumbotron bg-transparent">
+    <h1 class="display-3">@Model.Title</h1>
+    <hr class="my-4">
+    <p class="lead">Year: @Model.Year</p>
+    <p class="lead">Rated: @Model.Rated</p>
+    <p class="lead">Runtime: @Model.Runtime</p>
+    <p class="lead">Genre: @Model.Genre</p>
+    <p class="lead">Director: @Model.Director</p>
+    <p class="lead">Writer: @Model.Writer</p>
+    <p class="lead">Actors: @Model.Actors</p>
+    <p class="lead">Language: @Model.Language</p>
+    <p class="lead">Country: @Model.Country</p>
+    <p class="lead">Poster: @Model.Poster</p>
+    <p class="lead">Metascore: @Model.Metascore</p>
+    <p class="lead">ImdbRating: @Model.ImdbRating</p>
+    <p class="lead">ImdbVotes: @Model.ImdbVotes</p>
+    <p class="lead">Production: @Model.Production</p>
+    <hr class="my-4">
+    <p>Plot: @Model.Plot</p>
+    <hr class="my-4">
+    <p class="lead">
+        <a class="btn btn-primary btn-md" asp-controller="Home" asp-action="Index">Home</a>
+        @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }, new { @class = "btn btn-success btn-md" })
+    </p>
+</div>
 }
 else
 {
