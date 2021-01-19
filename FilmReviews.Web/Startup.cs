@@ -23,7 +23,7 @@ namespace FilmReviews.Web
         {
             services.AddControllersWithViews();
 
-            services.AddScoped<IHttpService, HttpService>();
+            services.AddSingleton<IHttpService, HttpService>();
             services.AddSingleton<CacheService>();
 
             services.AddHttpClient<HttpService>("filmReviewsAPI", c =>
