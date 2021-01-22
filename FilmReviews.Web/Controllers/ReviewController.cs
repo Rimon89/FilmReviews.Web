@@ -44,7 +44,7 @@ namespace FilmReviews.Web.Controllers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _flashMessage.Warning("An error occurred on the server.");
+                    _flashMessage.Danger("An error occurred on the server.");
                     return RedirectToAction(nameof(GetAllReviews));
                 }
 
@@ -54,7 +54,7 @@ namespace FilmReviews.Web.Controllers
             return View(review);
         }
 
-        [HttpGet(Constants.ApiRoutes.Review.All)]
+        [HttpGet(Constants.ApiRoutes.All)]
         public async Task<IActionResult> GetAllReviews()
         {
             if (!_cacheService.TryGetValue(Constants.CacheKeys.AllReviews, out List<Review> reviews))
@@ -63,7 +63,7 @@ namespace FilmReviews.Web.Controllers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _flashMessage.Warning("An error occurred on the server.");
+                    _flashMessage.Danger("An error occurred on the server.");
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -88,7 +88,7 @@ namespace FilmReviews.Web.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                _flashMessage.Warning("An error occurred on the server.");
+                _flashMessage.Danger("An error occurred on the server.");
             }
             return View(nameof(Index), review);
         }
@@ -137,7 +137,7 @@ namespace FilmReviews.Web.Controllers
                     return RedirectToAction(nameof(Edit));
                 }
 
-                _flashMessage.Warning("An error occurred on the server.");
+                _flashMessage.Danger("An error occurred on the server.");
             }
             return RedirectToAction(nameof(Edit));
         }

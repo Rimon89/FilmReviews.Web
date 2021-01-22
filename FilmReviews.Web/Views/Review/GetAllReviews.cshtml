@@ -54,7 +54,7 @@
                         @if (item.MovieReview.Length > 10)
                         {
                             @item.MovieReview.Substring(0, 9)
-                            <text> ... </text>
+                            <text>...</text>
                         }
                         else
                         {
@@ -67,16 +67,10 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Author)
                     </td>
-                    <td>
-                        <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">
-                            <i class="fa fa-search"></i> Edit
-                        </a>
-                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">
-                            <i class="fa fa-search"></i> Details
-                        </a>
-                        <a class="btn btn-outline-warning" asp-action="Delete" asp-route-id="@item.Id">
-                            <i class="fa fa-search"></i> Delete
-                        </a>
+                    <td class="btn-group">
+                        <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a class="btn btn-outline-warning" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                     </td>
                 </tr>
             }
@@ -87,4 +81,3 @@ else
 {
     <h1>Empty! :(</h1>
 }
-

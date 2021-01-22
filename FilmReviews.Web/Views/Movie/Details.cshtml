@@ -6,36 +6,38 @@
 
 @if (Model != null)
 {
-<div class="jumbotron bg-transparent">
-    <h1 class="display-3">@Model.Title</h1>
-    <hr class="my-4">
-    <p class="lead">Year: @Model.Year</p>
-    <p class="lead">Rated: @Model.Rated</p>
-    <p class="lead">Runtime: @Model.Runtime</p>
-    <p class="lead">Genre: @Model.Genre</p>
-    <p class="lead">Director: @Model.Director</p>
-    <p class="lead">Writer: @Model.Writer</p>
-    <p class="lead">Actors: @Model.Actors</p>
-    <p class="lead">Language: @Model.Language</p>
-    <p class="lead">Country: @Model.Country</p>
-    <p class="lead">Poster: @Model.Poster</p>
-    <p class="lead">Metascore: @Model.Metascore</p>
-    <p class="lead">ImdbRating: @Model.ImdbRating</p>
-    <p class="lead">ImdbVotes: @Model.ImdbVotes</p>
-    <p class="lead">Production: @Model.Production</p>
-    <hr class="my-4">
-    <p>Plot: @Model.Plot</p>
-    <hr class="my-4">
-    <p class="lead">
-        <a class="btn btn-primary btn-md" asp-controller="Home" asp-action="Index">Home</a>
-        @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }, new { @class = "btn btn-success btn-md" })
-    </p>
-</div>
+    <div class="jumbotron bg-transparent">
+        <h1 class="display-3">@Model.Title</h1>
+        <hr class="my-4">
+        <p class="lead">Year: @Model.Year</p>
+        <p class="lead">Rated: @Model.Rated</p>
+        <p class="lead">Runtime: @Model.Runtime</p>
+        <p class="lead">Genre: @Model.Genre</p>
+        <p class="lead">Director: @Model.Director</p>
+        <p class="lead">Writer: @Model.Writer</p>
+        <p class="lead">Actors: @Model.Actors</p>
+        <p class="lead">Language: @Model.Language</p>
+        <p class="lead">Country: @Model.Country</p>
+        <p class="lead">Poster: <a href="@Model.Poster">@Model.Poster</a></p>
+        <p class="lead">Metascore: @Model.Metascore</p>
+        <p class="lead">ImdbRating: @Model.ImdbRating</p>
+        <p class="lead">ImdbVotes: @Model.ImdbVotes</p>
+        <p class="lead">Production: @Model.Production</p>
+        <hr class="my-4">
+        <p>Plot: @Model.Plot</p>
+        <hr class="my-4">
+        <p class="lead">
+            <a class="btn btn-primary btn-md" asp-controller="Home" asp-action="Index">Home</a>
+            @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }, new { @class = "btn btn-success btn-md" })
+        </p>
+    </div>
 }
 else
 {
-    <h1>Empty! :(</h1>
-    <div>
-        <a asp-controller="Home" asp-action="Index">Home</a>
+    <div class="jumbotron bg-transparent">
+        <h1 class="display-3">Empty! :(</h1>
+        <hr class="my-4">
+        <p class="lead">
+            <a class="btn btn-primary btn-md" asp-controller="Home" asp-action="Index">Home</a>
     </div>
 }
