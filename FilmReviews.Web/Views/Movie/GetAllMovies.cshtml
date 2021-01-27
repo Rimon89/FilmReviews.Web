@@ -4,42 +4,40 @@
     ViewData["Title"] = "GetAllMovies";
 }
 
-@if (Model.Count() > 0)
-{
-    <h1>Movies</h1>
-    <table class="table table-hover ">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Year)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Runtime)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Genre)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Director)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Awards)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ImdbRating)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Poster)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+<h1>Movies</h1>
+<table class="table table-hover ">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Runtime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Director)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Awards)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImdbRating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Poster)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
             <tr class="table-default">
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
@@ -67,14 +65,41 @@
                 </td>
                 <td class="btn-group">
                     <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.ImdbId">Details</a>
-                    <a class="btn btn-outline-warning" asp-action="Delete" asp-route-id="@item.ImdbId">Delete</a>
+                    <a onclick=Delete("/Movie/Delete/@item.ImdbId") class="btn btn-outline-warning" asp-action="Delete" asp-route-id="@item.ImdbId">Delete</a>
                 </td>
             </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+<script>
+    function Delete(url) {
+        swal({
+            title: "Are you sure you want to delete movie and all related reviews?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function () {
+                        refreshPage();
+                    },
+                    error: function () {
+                        swal({
+                            title: "An error occurred on the server.",
+                            icon: "error"
+                        });
+                    }
+                });
             }
-        </tbody>
-    </table>
-}
-else
-{
-    <h1>Empty! :(</h1>
+        });
+    }
+    function refreshPage() {
+        location.reload(true);
+    }
+</script>
 }

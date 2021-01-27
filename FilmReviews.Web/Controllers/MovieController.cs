@@ -29,29 +29,25 @@ namespace FilmReviews.Web.Controllers
         [HttpGet(Constants.ApiRoutes.Movie.Details)]
         public async Task<IActionResult> Details(string imdbId)
         {
-            if (!_cacheService.TryGetValue<Movie>(Constants.CacheKeys.Movie + imdbId, out Movie movie))
+            var response = await _httpService.GetAsync($"api/movie/{imdbId}");
+
+            Movie movie;
+            if (!response.IsSuccessStatusCode)
             {
-                var response = await _httpService.GetAsync($"api/movie/{imdbId}");
-                if (!response.IsSuccessStatusCode)
+                movie = null;
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    movie = null;
-
-                    if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        _flashMessage.Warning("Movie Not Found");
-                        return View(movie);
-                    }
-
-                    _flashMessage.Danger("An error occurred on the server.");
+                    _flashMessage.Warning("Movie Not Found");
                     return View(movie);
                 }
-                movie = await _httpService.DeserializeAsync<Movie>(response);
-                _cacheService.Set(Constants.CacheKeys.Movie + imdbId, movie, new MemoryCacheEntryOptions
-                {
-                    AbsoluteExpiration = DateTime.Now.AddHours(1),
-                    SlidingExpiration = TimeSpan.FromMinutes(5)
-                });
+
+                _flashMessage.Danger("An error occurred on the server.");
+                return View(movie);
             }
+            _cacheService.Remove(Constants.CacheKeys.AllMovies);
+            movie = await _httpService.DeserializeAsync<Movie>(response);
+ 
             return View(movie);
         }
 
@@ -69,7 +65,11 @@ namespace FilmReviews.Web.Controllers
                 }
 
                 movies = await _httpService.DeserializeAsync<List<Movie>>(response);
-                _cacheService.Set(Constants.CacheKeys.AllMovies, movies);
+                _cacheService.Set(Constants.CacheKeys.AllMovies, movies, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTime.Now.AddDays(1),
+                    SlidingExpiration = TimeSpan.FromMinutes(30)
+                });
             }
             return View(movies);
         }
@@ -82,12 +82,11 @@ namespace FilmReviews.Web.Controllers
             if (response.IsSuccessStatusCode)
             {
                 _cacheService.Remove(Constants.CacheKeys.AllMovies);
-                _flashMessage.Confirmation("Deleted successfully");
+                _cacheService.Remove(Constants.CacheKeys.AllReviews);
                 return RedirectToAction(nameof(GetAllMovies));
             }
 
-            _flashMessage.Danger("An error occurred on the server.");
-            return RedirectToAction(nameof(GetAllMovies));
+            return BadRequest();
         }
     }
 }

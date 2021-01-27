@@ -4,8 +4,6 @@
     ViewData["Title"] = "Details";
 }
 
-@if (Model != null)
-{
 <div class="jumbotron bg-transparent">
     <h1 class="display-3">@Model.Title</h1>
     <hr class="my-4">
@@ -27,17 +25,7 @@
     <p>Plot: @Model.Plot</p>
     <hr class="my-4">
     <p class="lead">
-        <a class="btn btn-primary btn-md" asp-controller="Home" asp-action="Index">Home</a>
+        <a class="btn btn-primary btn-md" asp-action="GetAllMovies">List</a>
         @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }, new { @class = "btn btn-success btn-md" })
     </p>
 </div>
-}
-else
-{
-    <div class="jumbotron bg-transparent">
-        <h1 class="display-3">Empty! :(</h1>
-        <hr class="my-4">
-        <p class="lead">
-            <a class="btn btn-primary btn-md" asp-controller="Home" asp-action="Index">Home</a>
-    </div>
-}
