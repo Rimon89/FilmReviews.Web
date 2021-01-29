@@ -1,12 +1,12 @@
-* Movie Reviews (Client)
+# Movie Reviews (Client)
 
 En applikation där man kan söka efter filmer i Imdb med hjälp av ett öppet API, för att sedan kunna recensera dem. Applikation är skriven i .net core MVC.
 
-** Installation
+## Installation
 
 Här räcker det med att ladda hem projektet.
 
-** Struktur
+## Struktur
 
 Här har jag också använt mig av olika SOLID principer, felhantering, asynkrona anrop och caching.
 
