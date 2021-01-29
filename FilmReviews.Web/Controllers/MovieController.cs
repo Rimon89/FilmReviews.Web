@@ -3,9 +3,12 @@ using FilmReviews.Web.Services;
 using FilmReviews.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Vereyon.Web;
 
@@ -17,13 +20,15 @@ namespace FilmReviews.Web.Controllers
     {
         private readonly IFlashMessage _flashMessage;
         private readonly IHttpService _httpService;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly CacheService _cacheService;
 
-        public MovieController(IHttpService httpService, IFlashMessage flashMessage, CacheService cacheService)
+        public MovieController(IHttpService httpService, IFlashMessage flashMessage, CacheService cacheService, IHttpClientFactory clientFactory)
         {
             _httpService = httpService;
             _flashMessage = flashMessage;
             _cacheService = cacheService;
+            _clientFactory = clientFactory;
         }
 
         [HttpGet(Constants.ApiRoutes.Movie.Details)]
@@ -47,7 +52,7 @@ namespace FilmReviews.Web.Controllers
             }
             _cacheService.Remove(Constants.CacheKeys.AllMovies);
             movie = await _httpService.DeserializeAsync<Movie>(response);
- 
+
             return View(movie);
         }
 
@@ -71,6 +76,34 @@ namespace FilmReviews.Web.Controllers
                     SlidingExpiration = TimeSpan.FromMinutes(30)
                 });
             }
+            return View(movies);
+        }
+
+        [HttpGet("search/{title}")]
+        public async Task<IActionResult> Search(string title)
+        {
+            //Needs refactoring.
+
+            var client = _clientFactory.CreateClient("omdb");
+            var response = await client.GetAsync($"?s={title}&type=movie&apikey=6cf600c0");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _flashMessage.Danger("An error occurred on the server.");
+                return RedirectToAction("Index", "Home");
+            }
+
+            var parsedResponse = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            var obj = parsedResponse["Search"];
+
+            if (obj == null)
+                return View();
+
+            var results = parsedResponse["Search"].Children();
+
+            var movies = results.Select(movie => movie.ToObject<ListMovie>()).ToList();
+
             return View(movies);
         }
 

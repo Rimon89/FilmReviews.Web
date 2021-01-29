@@ -26,6 +26,10 @@ namespace FilmReviews.Web
             services.AddSingleton<IHttpService, HttpService>();
             services.AddSingleton<CacheService>();
 
+            services.AddHttpClient("omdb", c =>
+            {
+                c.BaseAddress = new Uri(Configuration.GetValue<string>("OmdbAPI"));
+            });
             services.AddHttpClient<HttpService>("filmReviewsAPI", c =>
             {
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("FilmReviewsAPI"));

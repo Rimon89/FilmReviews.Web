@@ -25,7 +25,7 @@
     <p>Plot: @Model.Plot</p>
     <hr class="my-4">
     <p class="lead">
-        <a class="btn btn-primary btn-md" asp-action="GetAllMovies">List</a>
+        <a class="btn btn-primary btn-md" onclick="history.back()">Go Back</a>
         @Html.ActionLink("Create Review", "Index", "Review", new { imdbId = Model.ImdbId, movieTitle = Model.Title }, new { @class = "btn btn-success btn-md" })
     </p>
 </div>
