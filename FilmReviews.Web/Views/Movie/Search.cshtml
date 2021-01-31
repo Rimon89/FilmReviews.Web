@@ -13,12 +13,14 @@
     <div class="row">
         @foreach (var item in Model)
         {
-            <div class="col-sm-3">
-                <div class="card-deck" style="width: 10rem;">
-                    <img class="card-img-top" src="@item.Poster" alt="Card image cap">
+            <div class="col-sm-3 movie">
+                <div class="card-deck h-100" style="width: 12rem;">
+                    <a asp-action="Details" asp-route-id="@item.imdbID">
+                        <img class="card-img-top" src="@item.Poster" alt="Card image cap">
+                    </a>
                     <div class="card-body">
                         <h5 class="card-title">@item.Title</h5>
-                        <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.imdbID">Details</a>
+                        <a class="btn btn-outline-info btn-block" asp-action="Details" asp-route-id="@item.imdbID">Details</a>
                     </div>
                 </div>
             </div>
